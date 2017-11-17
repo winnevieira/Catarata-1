@@ -1,5 +1,4 @@
-#include "imagem.h"
-
+#include "uteis.h"
 int main(int argc, char const *argv[]) {
 	//Testando se os argumentos minimos necessarios foram passados
 	if (argc < 7) {
@@ -28,7 +27,8 @@ int main(int argc, char const *argv[]) {
 		}
 	}
 
-	char *filename = (char *) argv[inputAUX]; //Variavel que contem o nome da imagem a ser processada
+	char *filepath = (char *) argv[inputAUX]; //Variavel que contem o nome da imagem+diretorio a ser processada
+	char *filename = (char *) tirar_diretorio_do_nome_da_imagem(filepath);
 	char *formato = (char *) argv[formatoAUX]; //Variavel que contem o nome do formato da imagem a ser processada
 	char *diagnostico = (char *) argv[diagAUX]; //Variavel que contem o nome do arquvio que contera o diagnostico
 	char sn;//De sim ou nao

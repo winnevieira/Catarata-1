@@ -25,6 +25,15 @@ Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int la
 	return M;
 }
 
+//Remove o caminho de diretorio da string
+char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
+
+	//Se a o argumento for o proprio arquivo, retorna ele mesmo
+	if (strstr(filepath, '/') == NULL) {
+		return filepath;
+	}
+}
+
 //Funcao para liberar o espaco alocado para imagens
 void freeImagem(Imagem *img) {
 	unsigned int i;
@@ -39,7 +48,6 @@ void freeImagem(Imagem *img) {
 //Funcao de criacao do nome de onde eu quero salvar a imagem construida
 char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 	char *outfilename;
-	int x = strlen(filename);
 
 	outfilename = (char *) calloc(strlen(folder) + strlen(filename) + strlen(toAdd) + strlen(formato), sizeof(char));//Garantir que haja espaco suficiente em 'outfilename'
 	strcpy(outfilename,folder);

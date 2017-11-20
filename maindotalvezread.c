@@ -1,4 +1,7 @@
 #include "uteis.h"
+#include "processos.h"
+#include "write_img.h"
+#include "talvezread.h"
 int main(int argc, char const *argv[]) {
 	//Testando se os argumentos minimos necessarios foram passados
 	if (argc < 7) {
@@ -45,79 +48,100 @@ int main(int argc, char const *argv[]) {
 		char *outfileGrey = saidaImagem("out/", filename, formato, "_grey");//Onde eu quero salvar a imagem acinzentada
 		write_img(greyImg, outfileGrey);
 		free(outfileGrey);
-
 	}
+
 	else if (sn == 'N') {
 		printf("Nenhuma imagem cinza foi criada\n");
 	}
+
 	else {
 		fprintf(stderr, "ERRO:Necessario fazer uma escolha!\n");
 		return 0;
 	}
 
-	//freeImagem(originalImg);
 
-	printf("Quantas vezes deseja borrar?\n");
-	scanf(" %d", &x);
+	x = 1;//Quantificador
+
 
 	//Minha imagem borrada
 	Imagem *gaussImg = (Imagem *) GaussFilter(greyImg, x);
-	printf("A imagem foi borrada um total de %d vezes!\n", x);
 
 	printf("Deseja criar a imagem borrada? Digite S para sim ou N para nao.\n");
 	scanf(" %c", &sn);
 
 	if (sn == 'S') {
-		if (x == 0) {
-			char *outfileGauss = saidaImagem("out/", filename, formato, "_grey_NOgauss");
-			write_img(gaussImg, outfileGauss);
-			free(outfileGauss);
-		}
-		else {
-			char *outfileGauss = saidaImagem("out/", filename, formato, "_grey_gauss");//Onde eu quero salvar a imagem borrada
-			write_img(gaussImg, outfileGauss);
-			free(outfileGauss);		
-		}
+		char *outfileGauss = saidaImagem("out/", filename, formato, "_gauss");//Onde eu quero salvar a imagem borrada
+		write_img(gaussImg, outfileGauss);
+		free(outfileGauss);		
 	}
+
 	else if (sn == 'N') {
 		printf("Nenhuma imagem borrada foi criada\n");
 	}
+
 	else {
 		fprintf(stderr, "ERRO:Necessario fazer uma escolha!\n");
 		return 0;
 	}
 
-	//freeImagem(greyImg);
 
-	printf("Quantas vezes deseja aplicar o filtro de sobel?\n");
-	scanf("%d", &x);
+	x = 1;//Quantificador
+
 
 	//Minha imagem sob aplicacao do filtro de sobel
 	Imagem *sobelImg = (Imagem *) SobelFilter(gaussImg, x);
-	printf("O filtro de sobel foi aplicado %d vezes.\n", x);
 
 	printf("Deseja criar a imagem com filtro aplicado? Digite S para sim ou N para nao.\n");
 	scanf(" %c", &sn);
 
 	if (sn == 'S') {
-		if (x == 0) {
-			char *outfileSobel = saidaImagem("out/", filename, formato, "_grey_gauss_NOsobel");
-			write_img(sobelImg, outfileSobel);
-			free(outfileSobel);
-		}
-		else {
-			char *outfileSobel = saidaImagem("out/", filename, formato, "_grey_gauss_sobel");//Onde eu quero salvar a imagem borrada
-			write_img(sobelImg, outfileSobel);
-			free(outfileSobel);	
-		}
+		char *outfileSobel = saidaImagem("out/", filename, formato, "_sobel");//Onde eu quero salvar a imagem sob aplicacao de sobel
+		write_img(sobelImg, outfileSobel);
+		free(outfileSobel);	
 	}
+
 	else if (sn == 'N') {
 		printf("Nenhuma imagem com aplicacao de sobel foi criada\n");
 	}
+
 	else {
 		fprintf(stderr, "ERRO:Necessario fazer uma escolha!\n");
 		return 0;
 	}
+
+	//----------------------------//
+
+	//Minha imagem binarizada
+	int limiar;
+	if (strcmp(filename, "c1.ppm") == 0) {
+		limiar = 29;
+	}
+
+	else if (strcmp(filename, "c2.ppm") == 0) {
+		limiar = 40;//Sla esse carai, dps vejo
+	}
+// E ETC
+
+	Imagem *binImg = Binarizacao(sobelImg, 55); 
+
+	printf("Deseja criar a imagem binarizada? Digite S para sim ou N para nao.\n");
+	scanf(" %c", &sn);
+
+	if (sn == 'S') {
+		char *outfileBin = saidaImagem("out/", filename, formato, "_sobel_bin");//Onde eu quero salvar a imagem binarizada
+		write_img(binImg, outfileBin);
+		free(outfileBin);	
+	}
+
+	else if (sn == 'N') {
+		printf("Nenhuma imagem binarizada foi criada\n");
+	}
+
+	else {
+		fprintf(stderr, "ERRO:Necessario fazer uma escolha!\n");
+		return 0;
+	}
+
 
 	return 0;
 }

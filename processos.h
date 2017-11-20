@@ -9,4 +9,6 @@ Imagem *GaussFilter (Imagem *m, int blurtimes);
 
 Imagem *SobelFilter (Imagem *m, int limite);
 
+Imagem *Binarizacao (Imagem *m, int limiar);
+
 #endif

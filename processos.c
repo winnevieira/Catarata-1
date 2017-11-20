@@ -142,3 +142,29 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 	freeImagem(m);
 	return SobelImage;
 }
+
+Imagem *Binarizacao (Imagem *m, int limiar) {
+	int i,j;
+
+	Imagem *BinImage = criarImagem(m->altura, m->largura, m->max);
+	strcpy(BinImage->header, m->header);
+
+	for (i=0; i < m->altura; i++) {
+		for (j=0; j < m->largura; j++) {
+			//Para cada pixel, checaremos se ele e maior que o limiar, se sim, igualaremos ao max
+			//Se nao, igualaremos a 0
+			if (m->M[i][j].r > limiar) {
+				BinImage->M[i][j].r = m->max;
+				BinImage->M[i][j].g = m->max;
+				BinImage->M[i][j].b = m->max;
+			}
+			else {
+				BinImage->M[i][j].r = 0;
+				BinImage->M[i][j].g = 0;
+				BinImage->M[i][j].b = 0;
+			}
+		}
+	}
+	freeImagem(m);
+	return BinImage;
+}

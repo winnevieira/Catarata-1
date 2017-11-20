@@ -29,9 +29,27 @@ Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int la
 char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 
 	//Se a o argumento for o proprio arquivo, retorna ele mesmo
-	if (strstr(filepath, '/') == NULL) {
+	if (!strstr(filepath, "/")) {
 		return filepath;
 	}
+
+	char *filename_sem_diretorio = (char *) calloc(strlen(filepath),sizeof(char));
+
+	//tira a pasta folder do nome
+	int t = strlen(filepath);
+	int j;
+	for (int i=0; i < t; i++) {
+		if (filepath[i] == '/') {
+			//variavel para me ajudar a manter o valor de i
+			int y = i;
+			for (j=0; j < t-i; j++) {
+				filename_sem_diretorio[j] = filepath[y+1];
+				y++;
+			}
+			filename_sem_diretorio[j] = '\0';
+		}
+	}
+	return filename_sem_diretorio;
 }
 
 //Funcao para liberar o espaco alocado para imagens

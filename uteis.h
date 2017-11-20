@@ -25,4 +25,6 @@ void freeImagem(Imagem *img);
 
 char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd);
 
+char *tirar_diretorio_do_nome_da_imagem(char *filepath);
+
 #endif

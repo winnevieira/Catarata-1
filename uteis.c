@@ -19,7 +19,7 @@ Imagem *criarImagem(unsigned int altura, unsigned int largura, unsigned int max)
 Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int largura) {
 	Pixel **M = calloc(altura,sizeof(Pixel *)); //Alocaçao de criação das linhas
 	unsigned int i;
-	for (i=0; i<altura; i++) {
+	for (i=0; i < altura; i++) {
 		M[i] = calloc(largura,sizeof(Pixel));//Alocação de criação das colunas
 	}
 	return M;
@@ -84,3 +84,25 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 	 
 	return outfilename;
 }
+
+int ***alocar_espaco_para_circulos(unsigned int altura, unsigned int largura, int raio) {
+	int ***circulos = calloc(altura,sizeof(int **));
+	unsigned int i;
+	for (i=0; i < altura; i++) {
+		circulos[i] = calloc(largura,sizeof(int *));
+		for (unsigned int j=0; j < largura; j++) {
+			circulos[i][j] = calloc(raio,sizeof(int));
+		}
+	}
+	return circulos;
+}
+
+Circulo *criarCirculo(unsigned int altura, unsigned int largura, int raio) {
+	Circulo *novoCirculo = (Circulo *) calloc(1,sizeof(Circulo));
+	novoCirculo->count = 0;
+	novoCirculo->accumulator = alocar_espaco_para_circulos(altura, largura, raio);
+	return novoCirculo;
+}
+
+
+

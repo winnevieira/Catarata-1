@@ -18,8 +18,9 @@ typedef struct {
 } Imagem;
 
 typedef struct {
-	int x,y,r;
-} Centro;
+	int count;
+	int ***accumulator;
+} Circulo;
 
 Imagem *criarImagem(unsigned int altura, unsigned int largura, unsigned int max);
 

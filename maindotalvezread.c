@@ -141,6 +141,20 @@ int main(int argc, char const *argv[]) {
 		fprintf(stderr, "ERRO:Necessario fazer uma escolha!\n");
 		return 0;
 	}
+	
+		Centro *c = Transformada_Hough(binImg);
+	int x_posicao, y_posicao;
+
+	for (int t=0; t < 360; t++) {
+		//Calcula coordenadas de pontos no raio
+		y_posicao = c->r*sin(t*(PI/180.0));
+		x_posicao = c->r*cos(t*(PI/180.0));
+
+		binImg->M[c->y + y_posicao][c->x + x_posicao].r = 255;
+	}
+
+	return 0;
+}
 
 
 	return 0;

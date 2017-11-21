@@ -17,6 +17,10 @@ typedef struct {
 	Pixel **M;
 } Imagem;
 
+typedef struct {
+	int x,y,r;
+} Centro;
+
 Imagem *criarImagem(unsigned int altura, unsigned int largura, unsigned int max);
 
 Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int largura);

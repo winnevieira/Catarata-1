@@ -168,3 +168,111 @@ Imagem *Binarizacao (Imagem *m, int limiar) {
 	freeImagem(m);
 	return BinImage;
 }
+
+Centro *Transformada_Hough (Imagem *m) {
+	int altura = (int) m->altura;
+	int largura = (int) m->largura;
+	int r;
+
+	int rmin = fmin(altura,largura)/20;
+	int rmin_iris = fmin(altura,largura)/10;
+	int rmax = fmin(altura,largura)/4;
+
+	int ***A = calloc(altura,sizeof(int **));
+		for (int z=0; z < altura; z++) {
+			*A[z] = calloc(largura,sizeof(int *));
+			for (int w=0; w < largura; w++) {
+				A[z][w] = calloc(rmax-rmin+1, sizeof(int));
+			}
+		}
+
+	if (A == NULL) {
+	    fprintf(stderr, "ERR15: Falha em alocacao de matriz tridimencional\n");
+   		return NULL;
+   	}
+
+	int i,j,x,y;
+	for (i=0; i < altura; i++) {
+		for (j=0; j < largura; j++) {
+			if (m->M[i][j].r == 255) {
+				for (r=rmin; r <= rmax; r++) {
+					for (int g=0; g < 360; g++) {
+						x = i - r*cos(g*PI/180);//coordenada x do centro
+						y = j - r*sin(g*PI/180);//coordenada y do centro
+						A[x][y][r]++;//espaço de Hough
+					}
+				}
+			}
+		}
+	}
+
+	//Algortimo que identifica valor maximo na matriz de Hough com mais pontos
+	unsigned int imax, jmax;
+	double max = 0;
+	long int icount = 0, jcount = 0, count = 0;
+	for (i=rmax; i < altura-rmax; i++) {
+		for (j=rmax; j < largura-rmax;j++) {
+			for(r=rmin_iris; r <= rmax; r++) {
+				max = fmax(A[i][j][r], max);
+			}
+		}
+	}
+	//Algoritmo para achar centro
+	for (i=rmin; i < altura-rmax; i++) {
+		for (j=rmin; j < largura-rmax; j++) {
+			for (r=rmin_iris; r <= rmax; r++) {
+				//As coordenadas serao uma media das coordenadas, dos pontos na matriz, maiores
+				//que ou iguais a 87,5% do valor maximo na matriz
+				if (A[i][j][r] >= 0.875*max) {
+					count++;
+					icount += i;
+					jcount += j;
+				}
+			}
+		}
+	}
+	//Calculo da media
+	imax = (unsigned int) icount/count;
+	jmax = (unsigned int) jcount/count;
+
+	Centro *c = malloc(sizeof(Centro));
+	if (c == NULL) {
+		fprintf(stderr, "ERRO: CENTRO DE PUPILA NAO ALOCADO CORRETAMENTE\n");
+	}
+
+	//Definindo as coordenadas
+	c->x = (int) jmax;
+	c->y = (int) imax;
+	c->r = 0;
+
+	//Algoritmo para achar o raio da pupila
+	max = 0;
+	int raios[rmax-rmin+1];
+	int r_max_diferente;
+	int count_raios = 0;
+	for (r=rmin; r <= rmax+1; r++) {
+		if ((A[imax][jmax][r] == 0 && max != 0) || (r == rmax+1)) {
+			max = 0;
+			raios[count_raios++] = r_max_diferente;
+			continue;
+		}
+		if (A[imax][jmax][r] > max) {
+			max = A[imax][jmax][r];
+			r_max_diferente = r;
+		}
+	}
+
+	//Atraves dos maximos encontrados, achamos qual maximo pertence a pupila
+	for (i=0; i < count_raios; i++) {
+		if (i == count_raios-1) {
+			c->r = raios[i];
+		}
+		else if (raios[i] > (double) (raios[i+1])/3) {
+			c->r = raios[i];
+			if (i+1 == count_raios-1) {
+				break;
+			}
+		}
+	}
+	return c;
+}

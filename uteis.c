@@ -38,15 +38,15 @@ char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 	//tira a pasta folder do nome
 	int t = strlen(filepath);
 	int j;
-	for (int i=0; i < t; i++) {
+	for (int i=t-1; i >= 0; i--) {
 		if (filepath[i] == '/') {
 			//variavel para me ajudar a manter o valor de i
 			int y = i;
-			for (j=0; j < t-i; j++) {
+			for (j=0; j < t-1-i; j++) {
 				filename_sem_diretorio[j] = filepath[y+1];
 				y++;
 			}
-			filename_sem_diretorio[j] = '\0';
+			filename_sem_diretorio[j+1] = '\0';
 		}
 	}
 	return filename_sem_diretorio;
@@ -85,24 +85,25 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 	return outfilename;
 }
 
-int ***alocar_espaco_para_circulos(unsigned int altura, unsigned int largura, int raio) {
-	int ***circulos = calloc(altura,sizeof(int **));
-	unsigned int i;
-	for (i=0; i < altura; i++) {
-		circulos[i] = calloc(largura,sizeof(int *));
-		for (unsigned int j=0; j < largura; j++) {
-			circulos[i][j] = calloc(raio,sizeof(int));
-		}
-	}
-	return circulos;
-}
+//Procedimento para escrita do diagnostico de catarata
+// void make_diagnostico (double porcentoCatarata, char* diagnostico) {
 
-Circulo *criarCirculo(unsigned int altura, unsigned int largura, int raio) {
-	Circulo *novoCirculo = (Circulo *) calloc(1,sizeof(Circulo));
-	novoCirculo->count = 0;
-	novoCirculo->accumulator = alocar_espaco_para_circulos(altura, largura, raio);
-	return novoCirculo;
-}
+// 	char *new_diagnostico = calloc(strlen(diagnostico) + 10,sizeof(char));
+// 	sprintf(new_diagnostico, "out/%s", diagnostico);
+// 	FILE *arquivo = fopen(new_diagnostico, "w");
 
+// 	if (arquivo == NULL) {
+// 		fprintf(stderr, "ERR4R: Erro na criacao do arquivo com diagnostico\n");
+// 		return 0;
+// 	}
 
+// 	//Caso mais de 9% dos pixels do olho estiverem com a doenca, considera-se que o individuo possui catarata
+// 	if (porcentoCatarata >= 9) {
+// 		fprintf(arquivo, "Indivíduo com Catarata\nPorcentagem da pupila com a doença: %.3lf\n", porcentoCatarata);
+// 	}
+// 	else {
+// 		fprintf(arquivo, "Indivíduo sem Catarata\nPorcentagem da pupila com a doença: %.3lf\n", porcentoCatarata);
+// 	}
 
+// 	fclose(arquivo)
+// }

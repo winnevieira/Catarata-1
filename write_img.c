@@ -1,4 +1,4 @@
-#include "write_img.h"
+#include "write.h"
 
 void write_img(Imagem *m, char *outfilename) {
 	FILE* imagem;

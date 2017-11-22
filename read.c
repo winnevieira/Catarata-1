@@ -1,4 +1,4 @@
-#include "talvezread.h"
+#include "read.h"
 
 //FUNCAO DE LEITURA DE ARQUIVO, IDENTIFICACAO DA IMAGEM(CABECALHO E PIXELS) E RETIRADA DE COMENTARIOS
 Imagem *ler_img(char *filename) {

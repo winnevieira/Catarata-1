@@ -1,7 +1,7 @@
 #include "uteis.h"
 #include "processos.h"
-#include "write_img.h"
-#include "talvezread.h"
+#include "write.h"
+#include "read.h"
 
 int main(int argc, char const *argv[]) {
 	//Testando se os argumentos minimos necessarios foram passados

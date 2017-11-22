@@ -21,7 +21,7 @@ Imagem *make_PPM_cinza (Imagem *m) {
 			(GreyImage->M[i][j]).b = temp;
 		}
 	}
-	freeImagem(m);
+	//freeImagem(m);
 	return GreyImage;
 }
 
@@ -47,6 +47,7 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 
 	for (i=0; (unsigned int)i < m->altura; i++) {
 		for (j=0; (unsigned int)j < m->largura; j++) {
+			//Cada pixel
 			aux = 0;
 			for (k=0; k < 5; k++) {
 				for (l=0; l < 5; l++) {
@@ -60,9 +61,16 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 			GaussImage->M[i][j].r = aux;
 			GaussImage->M[i][j].g = aux;
 			GaussImage->M[i][j].b = aux;
-
 		}
 	}
+
+	if (!GaussImage) {
+		fprintf(stderr, "ERRO: Filtro Gaussiano nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
+		freeImagem(GaussImage);
+		freeImagem(m);
+	}
+
+	//Aqui comeca a recurcao para situacoes em que se usa mais de 1 vez o filtro
 	if (count == 0) {
 		printf("A imagem foi borrada com sucesso %d vez.\n", count + 1);
 		++count;
@@ -75,6 +83,7 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 	if (blurtimes > 1) {
 		GaussImage = GaussFilter(GaussImage, blurtimes -1);
 	}
+
 	freeImagem(m);
 	return GaussImage;
 }
@@ -126,6 +135,13 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 			}
 		}
 	}
+	if (!SobelImage) {
+		fprintf(stderr, "ERRO: Filtro de sobel nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
+		freeImagem(SobelImage);
+		freeImagem(m);
+	}
+
+	//Aqui comeca a recurcao para situacoes em que se usa mais de 1 vez o filtro
 	if (count == 0) {
 		printf("O filtro foi aplicado com sucesso %d vez.\n", count + 1);
 		++count;
@@ -139,6 +155,7 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 	if (limite > 1) {
 		SobelImage = SobelFilter(SobelImage, limite-1);
 	}
+
 	freeImagem(m);
 	return SobelImage;
 }
@@ -165,114 +182,167 @@ Imagem *Binarizacao (Imagem *m, int limiar) {
 			}
 		}
 	}
+
+	if (!BinImage) {
+		fprintf(stderr, "ERRO: Binarizacao nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
+		freeImagem(BinImage);
+		freeImagem(m);
+	}
+
 	freeImagem(m);
 	return BinImage;
 }
 
 Centro *Transformada_Hough (Imagem *m) {
-	int altura = (int) m->altura;
-	int largura = (int) m->largura;
-	int r;
-
-	int rmin = fmin(altura,largura)/20;
-	int rmin_iris = fmin(altura,largura)/10;
-	int rmax = fmin(altura,largura)/4;
-
-	int ***A = calloc(altura,sizeof(int **));
-		for (int z=0; z < altura; z++) {
-			*A[z] = calloc(largura,sizeof(int *));
-			for (int w=0; w < largura; w++) {
-				A[z][w] = calloc(rmax-rmin+1, sizeof(int));
-			}
-		}
-
-	if (A == NULL) {
-	    fprintf(stderr, "ERR15: Falha em alocacao de matriz tridimencional\n");
-   		return NULL;
-   	}
-
-	int i,j,x,y;
-	for (i=0; i < altura; i++) {
-		for (j=0; j < largura; j++) {
-			if (m->M[i][j].r == 255) {
-				for (r=rmin; r <= rmax; r++) {
-					for (int g=0; g < 360; g++) {
-						x = i - r*cos(g*PI/180);//coordenada x do centro
-						y = j - r*sin(g*PI/180);//coordenada y do centro
-						A[x][y][r]++;//espaço de Hough
-					}
-				}
-			}
-		}
-	}
-
-	//Algortimo que identifica valor maximo na matriz de Hough com mais pontos
-	unsigned int imax, jmax;
-	double max = 0;
-	long int icount = 0, jcount = 0, count = 0;
-	for (i=rmax; i < altura-rmax; i++) {
-		for (j=rmax; j < largura-rmax;j++) {
-			for(r=rmin_iris; r <= rmax; r++) {
-				max = fmax(A[i][j][r], max);
-			}
-		}
-	}
-	//Algoritmo para achar centro
-	for (i=rmin; i < altura-rmax; i++) {
-		for (j=rmin; j < largura-rmax; j++) {
-			for (r=rmin_iris; r <= rmax; r++) {
-				//As coordenadas serao uma media das coordenadas, dos pontos na matriz, maiores
-				//que ou iguais a 87,5% do valor maximo na matriz
-				if (A[i][j][r] >= 0.875*max) {
-					count++;
-					icount += i;
-					jcount += j;
-				}
-			}
-		}
-	}
-	//Calculo da media
-	imax = (unsigned int) icount/count;
-	jmax = (unsigned int) jcount/count;
-
-	Centro *c = malloc(sizeof(Centro));
-	if (c == NULL) {
-		fprintf(stderr, "ERRO: CENTRO DE PUPILA NAO ALOCADO CORRETAMENTE\n");
-	}
-
-	//Definindo as coordenadas
-	c->x = (int) jmax;
-	c->y = (int) imax;
-	c->r = 0;
-
-	//Algoritmo para achar o raio da pupila
-	max = 0;
-	int raios[rmax-rmin+1];
-	int r_max_diferente;
-	int count_raios = 0;
-	for (r=rmin; r <= rmax+1; r++) {
-		if ((A[imax][jmax][r] == 0 && max != 0) || (r == rmax+1)) {
-			max = 0;
-			raios[count_raios++] = r_max_diferente;
-			continue;
-		}
-		if (A[imax][jmax][r] > max) {
-			max = A[imax][jmax][r];
-			r_max_diferente = r;
-		}
-	}
-
-	//Atraves dos maximos encontrados, achamos qual maximo pertence a pupila
-	for (i=0; i < count_raios; i++) {
-		if (i == count_raios-1) {
-			c->r = raios[i];
-		}
-		else if (raios[i] > (double) (raios[i+1])/3) {
-			c->r = raios[i];
-			if (i+1 == count_raios-1) {
-				break;
-			}
-		}
-	}
-	return c;
+    int altura = (int) m->altura;
+    int largura = (int) m->largura;
+    int r;
+    double PI = 3.14159;
+    int rmin = fmin(altura,largura)/20;
+    int rmin_iris = fmin(altura,largura)/10;
+    int rmax = fmin(altura,largura)/4;
+ 
+    int *A = calloc(altura*largura*(rmax-rmin+1),sizeof(int));
+    if (A == NULL) {
+        fprintf(stderr, "ERR15: Falha em alocacao de matriz tridimencional\n");
+        return NULL;
+    }
+ 
+    int i,j,x,y;
+    int dim = altura*largura;
+    for (i=rmax; i < altura-rmax; i++) {
+        for (j=rmax; j < largura-rmax; j++) {
+            if (m->M[i][j].r == 255) {
+                for (r=rmin; r <= rmax; r++) {
+                    for (int g=0; g < 360; g++) {
+                        y = i - r * sin(g*PI/180.0);
+                        x = j + r * cos(g*PI/180.0);
+                        A[(r-rmin)*dim+(y*largura)+x]++;//espaço de Hough
+                    }
+                }
+            }
+        }
+    }
+ 
+    //Algortimo que identifica valor maximo na matriz de Hough com mais pontos
+    unsigned int imax, jmax;
+    double max = 0;
+    long int icount = 0, jcount = 0, count = 0;
+    for (i=rmax; i < altura-rmax; i++) {
+        for (j=rmax; j < largura-rmax;j++) {
+            for(r=rmin_iris; r <= rmax; r++) {
+                max = fmax(A[dim*(r-rmin)+(i*largura)+j], max);
+            }
+        }
+    }
+    //Algoritmo para achar centro
+    for (i=rmin; i < altura-rmax; i++) {
+        for (j=rmin; j < largura-rmax; j++) {
+            for (r=rmin_iris; r <= rmax; r++) {
+                //As coordenadas serao uma media das coordenadas, dos pontos na matriz, maiores
+                //que ou iguais a 87,5% do valor maximo na matriz
+                if (A[dim*(r-rmin)+(i*largura)+j] >= 0.875*max) {
+                    count++;
+                    icount += i;
+                    jcount += j;
+                }
+            }
+        }
+    }
+    //Calculo da media
+    imax = (unsigned int) icount/count;
+    jmax = (unsigned int) jcount/count;
+ 
+    Centro *c = malloc(sizeof(Centro));
+    if (c == NULL) {
+        fprintf(stderr, "ERRO: CENTRO DE PUPILA NAO ALOCADO CORRETAMENTE\n");
+    }
+ 
+    //Definindo as coordenadas
+    c->x = (int) jmax;
+    c->y = (int) imax;
+    c->r = 0;
+ 
+    //Algoritmo para achar o raio da pupila
+    max = 0;
+    int raios[rmax-rmin+1];
+    int r_max_diferente;
+    int count_raios = 0;
+    for (r=rmin; r <= rmax+1; r++) {
+        if ((A[dim*(r-rmin)+(imax*largura)+jmax] == 0 && max != 0) || (r == rmax+1)) {
+            max = 0;
+            raios[count_raios++] = r_max_diferente;
+            continue;
+        }
+        if (A[dim*(r-rmin)+(imax*largura)+jmax] > max) {
+            max = A[dim*(r-rmin)+(imax*largura)+jmax];
+            r_max_diferente = r;
+        }
+    }
+ 
+    //Atraves dos raios maximos encontrados, achamos qual raio pertence a pupila
+    for (i=0; i < count_raios; i++) {
+        if (i == count_raios-1) {
+            c->r = raios[i];
+        }
+        else if (raios[i] > (double) (raios[i+1])/3) {
+            c->r = raios[i];
+            if (i+1 == count_raios-1) {
+                break;
+            }
+        }
+    }
+    return c;
 }
+ 
+Imagem *pupila_segmentada (Imagem *m, Centro *c) {
+    Imagem *PupImage = criarImagem(m->altura, m->largura, m->max);
+    strcpy(PupImage->header, m->header);
+ 
+	//Algoritmo para pegar o circulo com centro no centro da pupila
+	int i,j;
+	for(i=0; i < m->altura; i++) {
+		for(j=0; j < m->largura; j++) {
+    		//Caso o pixel pertenca a um circulo de mesmo centro que a pupila
+    		//e com raio equivalente (5 pixels decrescidos para eliminar bordas da iris)
+    		if (sqrt((i-c->y)*(i-c->y)+(j-c->x)*(j-c->x)) < c->r-5) {
+        		PupImage->M[i][j].r = m->M[i][j].r;
+        		PupImage->M[i][j].g = m->M[i][j].g;
+        		PupImage->M[i][j].b = m->M[i][j].b;
+    		}
+    		else {
+        	PupImage->M[i][j].r = 0;
+        	PupImage->M[i][j].g = 0;
+        	PupImage->M[i][j].b = 0;
+    		}
+		}
+	}
+	if (!PupImage) {
+  		fprintf(stderr, "ERROW: Imagem da pupila segmentada saiu Nula\n");
+  		freeImagem(PupImage);
+  		freeImagem(m);
+	}
+	
+	freeImagem(m);
+	return PupImage;
+}
+
+// void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
+// 	unsigned int i,j,t;
+// 	int xpos, ypos;
+
+// 	//atribuicao de titulo
+// 	//percorre a circunferencia do circulo com centro igual
+// 	//a centro passado por parametro
+// 	for (t = 0; t < 360; t++) {
+// 		//calcula as coordenadas de pontos no raio
+// 		ypos = c->r*sin(t*(PI/180.0));
+// 		xpos = c->r*cos(t*(PI/180.0));
+
+// 		//marca coordenada no raio de verde
+// 		m->M[c->y + ypos][c->x + xpos].r = 0;
+// 		m->M[c->y + ypos][c->x + xpos].g = 255;
+// 		m->M[c->y + ypos][c->x + xpos].b = 0;
+// 		}
+// 	}
+// }

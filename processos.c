@@ -339,7 +339,7 @@ void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 		ypos = c->r*sin(t*(PI/180.0));
 		xpos = c->r*cos(t*(PI/180.0));
 
-		//marca coordenada no raio de verde
+		//marca em magenta a coordenada no raio
 		m->M[c->y+ypos][c->x+xpos].r = 255;
 		m->M[c->y+ypos][c->x+xpos].g = 0;
 		m->M[c->y+ypos][c->x+xpos].b = 255;

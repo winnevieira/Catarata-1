@@ -22,6 +22,7 @@ Imagem *make_PPM_cinza (Imagem *m) {
 		}
 	}
 	//freeImagem(m);
+	//Nao dou free para manter minha imagem original para uso futuro
 	return GreyImage;
 }
 
@@ -84,7 +85,8 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 		GaussImage = GaussFilter(GaussImage, blurtimes -1);
 	}
 
-	freeImagem(m);
+	//freeImagem(m);
+	//Nao dou free para manter a imagem cinza para utilizacao futura
 	return GaussImage;
 }
 
@@ -324,7 +326,7 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c) {
   		freeImagem(m);
 	}
 	
-	//freeImagem(m);
+	freeImagem(m);
 	return PupImage;
 }
 
@@ -344,4 +346,35 @@ void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 		m->M[c->y+ypos][c->x+xpos].g = 0;
 		m->M[c->y+ypos][c->x+xpos].b = 255;
 	}
+}
+
+double pixels_comprometidos (Imagem *m) {
+	int i,j;
+	int limiar = 6*(m->max/10);
+	int count_total = 0,count = 0;
+
+	for (i=0; i < m->altura; i++) {
+		for (j=(int) (m->largura)/4; j < m->largura; j++) {
+			//Para cada pixel, checar se o pixel pertence a pupila, e se sim, se ele esta comprometido ou nao
+			//Se o pixel pertencer a pupila, ou seja, diferente de 0
+			if (m->M[i][j].r != 0) {
+				count_total += 1;
+
+				if (m->M[i][j].r > limiar) {
+					count += 3;
+				}
+				else {
+					count += 0;
+				}
+			}
+			else {
+				count_total += 0;
+			}
+		}
+	}
+
+	double porcento = (double) (count/count_total);
+
+	freeImagem(m);
+	return porcento;
 }

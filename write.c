@@ -1,5 +1,6 @@
 #include "write.h"
 
+//Funcao de escrita da imagem passada por parametro, em um arquivo cujo nome tambem e passado por parametro
 void write_img(Imagem *m, char *outfilename) {
 	FILE* imagem;
 	unsigned int i,j;
@@ -9,7 +10,7 @@ void write_img(Imagem *m, char *outfilename) {
 	//Inserindo o formato da imagem criada
 	fprintf(imagem, "%s\n#BY DANIEL O. GUERRA E PEDRO P. PARAENSE\n", m->header); //A imagem criada sera do mesmo tipo da imagem inserida
 	//fprintf(imagem, "P3\n") Caso queira sempre em PPM
-
+	//Porem, em nosso caso, a imagem continua sempre sendo PPM
 
 	//Inserindo a largura e altura da matriz imagem, respectivamente
 	fprintf(imagem, "%u %u\n", m->largura, m->altura);
@@ -25,5 +26,6 @@ void write_img(Imagem *m, char *outfilename) {
 			fprintf(imagem, "%hu\n", m->M[i][j].b);
 		}
 	}
+
 	fclose(imagem);
 }

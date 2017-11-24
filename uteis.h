@@ -40,10 +40,13 @@ void freeImagem(Imagem *img);
 char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd);
 
 //Funcao para tirar o diretorio do nome da minha imagem
-//Ex: Projeto/in/n2.ppm vai resultar em n2.ppm
+//Na execucao do programa, eu posso colocar qualquer diretorio antes da imagem entra
+//que nao havera problema
+//Exemplo: ./catarata -i pasta/aleatoria/qualquer/Normal2.ppm -f ppm -o diag.txt
+//Minha imagem ainda sera Normal2.ppm
 char *tirar_diretorio_do_nome_da_imagem(char *filepath);
 
 //Procedimento para a criacao do meu arquivo texto com o diagnostico sobre Catarata
-void make_diagnostico(double porcentoCatarata, char* diagnostico);
+void make_diagnostico(double porcentoCatarata, char* diagnostico, char* filename);
 
 #endif

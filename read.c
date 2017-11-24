@@ -7,9 +7,14 @@ Imagem *ler_img(char *filename) {
 	unsigned int i,j,a;
 	char str_check[73];//Variavel para checar se ha '#'
 	unsigned int altura, largura, max;
+	
+	//Minha imagem dentro do diretorio de entrada (adiciono 'in')
+	char *real_filename = calloc(strlen(filename) + 5,sizeof(char));
+	sprintf(real_filename, "in/%s", filename);
+
 	Imagem *m;// Criando minha variavel de controle de imagens
 
-	arquivo = fopen(filename, "r");
+	arquivo = fopen(real_filename, "r");
 	if (arquivo == NULL) {
 		fprintf(stderr, "Erro de abertura de imagem\n");
 		exit(1);

@@ -1,17 +1,15 @@
 #include "read.h"
 
-//FUNCAO DE LEITURA DE ARQUIVO, IDENTIFICACAO DA IMAGEM(CABECALHO E PIXELS) E RETIRADA DE COMENTARIOS
+//Funcao de leitura de arquivo, identificacao da imagem(cabecalho e pixels) e retirada de comentarios
 Imagem *ler_img(char *filename) {
 	FILE *arquivo;
-	char formato[4];//Essa variavel serve somente para guardar o formato de uma imagem, para poder repassar essa informacao depois
+	char *formato = calloc(4,sizeof(char));//Essa variavel serve somente para guardar o formato de uma imagem, para poder repassar essa informacao depois
 	unsigned int i,j,a;
-	char str_check[73];//Variavel para checar se ha '#'
+	char *str_check = calloc(73,sizeof(char));//Variavel para checar se ha '#'
 	unsigned int altura, largura, max;
-	
-	//Minha imagem dentro do diretorio de entrada (adiciono 'in')
-	char *real_filename = calloc(strlen(filename) + 5,sizeof(char));
-	sprintf(real_filename, "in/%s", filename);
 
+	char *real_filename = calloc(strlen(filename) + 5,sizeof(char));//Considerando a pasta com as imagens, devo adiciona-la ao nome da imagem
+	sprintf(real_filename, "in/%s", filename);
 	Imagem *m;// Criando minha variavel de controle de imagens
 
 	arquivo = fopen(real_filename, "r");
@@ -85,6 +83,8 @@ Imagem *ler_img(char *filename) {
 		}
 	}
 
+	free(formato);
+	free(str_check);
 	fclose(arquivo);
 	return m;
 }

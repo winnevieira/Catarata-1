@@ -27,7 +27,7 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c);
 //Procedimento para o contorno da pupila em RGB
 void marcacao_de_pupila_cor (Imagem *m, Centro *c);
 
-//Funcao de calculo da porcentagem de catarata
-double pixels_comprometidos(Imagem *m);
+//Funcao para porcentagem de pixels com catarata
+double pixels_comprometidos (Imagem *m);
 
 #endif

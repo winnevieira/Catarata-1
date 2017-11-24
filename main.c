@@ -158,12 +158,12 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 	if (c->r == 0) { 
-		fprintf(stderr, "F4T4L 3RR0R: Nao existe um raio retornado\n");
+		fprintf(stderr, "F4T4L 3RR0R.1: Nao existe um raio retornado\n");
 		return 0;
 	}
 
 	//Minha imagem com a pupila segmentada
-	Imagem *pupilaImg = pupila_segmentada(originalImg, c);
+	Imagem *pupilaImg = pupila_segmentada(greyImg, c);
 
 	printf("Deseja criar a imagem da pupila segmentada em tons coloridos?\nS (sim) ou N (nao).\n");
 	scanf(" %c", &sn);
@@ -184,8 +184,6 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 
-	write_img(originalImg, "out/imagem_original.ppm");
-
 	//Minha imagem (em RGB) com a pupila contornada
 	printf("Deseja criar a imagem original em RGB com a pupila contornada?\nS (sim) ou N (nao).\n");
 	scanf(" %c", &sn);
@@ -204,7 +202,9 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 
-	make_diagnostico(15.2, diagnostico);
+	double porcentagem_catarata = pixels_comprometidos(pupilaImg);
+
+	make_diagnostico(porcentagem_catarata, diagnostico);
 
 	return 0;
 }

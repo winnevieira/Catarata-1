@@ -44,6 +44,6 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd);
 char *tirar_diretorio_do_nome_da_imagem(char *filepath);
 
 //Procedimento para a criacao do meu arquivo texto com o diagnostico sobre Catarata
-//void make_diagnostico(double porcentoCatarata, char* diagnostico)
+void make_diagnostico(double porcentoCatarata, char* diagnostico);
 
 #endif

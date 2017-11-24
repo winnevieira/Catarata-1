@@ -45,7 +45,9 @@ char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 			for (j=0; j < t-1-i; j++) {
 				filename_sem_diretorio[j] = filepath[y+1];
 				y++;
+				printf("%c\n", filename_sem_diretorio[j]);
 			}
+			break;
 			filename_sem_diretorio[j+1] = '\0';
 		}
 	}
@@ -66,6 +68,7 @@ void freeImagem(Imagem *img) {
 //Funcao de criacao do nome de onde eu quero salvar a imagem construida
 char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 	char *outfilename;
+	system("mkdir -p out");
 
 	outfilename = (char *) calloc(strlen(folder) + strlen(filename) + strlen(toAdd) + strlen(formato), sizeof(char));//Garantir que haja espaco suficiente em 'outfilename'
 	strcpy(outfilename,folder);
@@ -86,24 +89,24 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 }
 
 //Procedimento para escrita do diagnostico de catarata
-// void make_diagnostico (double porcentoCatarata, char* diagnostico) {
+void make_diagnostico (double porcentoCatarata, char* diagnostico) {
 
-// 	char *new_diagnostico = calloc(strlen(diagnostico) + 10,sizeof(char));
-// 	sprintf(new_diagnostico, "out/%s", diagnostico);
-// 	FILE *arquivo = fopen(new_diagnostico, "w");
+	char *new_diagnostico = calloc(strlen(diagnostico) + 6,sizeof(char));
+	sprintf(new_diagnostico, "out/%s", diagnostico);
+	FILE *arquivo = fopen(new_diagnostico, "w");
 
-// 	if (arquivo == NULL) {
-// 		fprintf(stderr, "ERR4R: Erro na criacao do arquivo com diagnostico\n");
-// 		return 0;
-// 	}
+	if (arquivo == NULL) {
+		fprintf(stderr, "ERR4R: Erro na criacao do arquivo com diagnostico\n");
+		exit(1);
+	}
 
-// 	//Caso mais de 9% dos pixels do olho estiverem com a doenca, considera-se que o individuo possui catarata
-// 	if (porcentoCatarata >= 9) {
-// 		fprintf(arquivo, "Indivíduo com Catarata\nPorcentagem da pupila com a doença: %.3lf\n", porcentoCatarata);
-// 	}
-// 	else {
-// 		fprintf(arquivo, "Indivíduo sem Catarata\nPorcentagem da pupila com a doença: %.3lf\n", porcentoCatarata);
-// 	}
+	//Caso mais de 9% dos pixels do olho estiverem comprometidos, considera-se que o individuo possui catarata
+	if (porcentoCatarata >= 9) {
+		fprintf(arquivo, "Situação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf\n%%\nFim do diagnóstico.", porcentoCatarata);
+	}
+	else {
+		fprintf(arquivo, "Situação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf\n%%\nFim do diagnóstico.", porcentoCatarata);
+	}
 
-// 	fclose(arquivo)
-// }
+	fclose(arquivo);
+}

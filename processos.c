@@ -1,6 +1,6 @@
 #include "processos.h"
 
-//FUNCAO DE CONVERSAO DA IMAGEM EM TONS DE CINZA
+//Funcao de criacao da minha imagem entrada em tons de cinza
 Imagem *make_PPM_cinza (Imagem *m) {
 	unsigned int i,j;
 	int temp;
@@ -22,13 +22,13 @@ Imagem *make_PPM_cinza (Imagem *m) {
 		}
 	}
 	//freeImagem(m);
-	//Nao dou free para manter minha imagem original para uso futuro
+	//Nao dou free aqui para guardar a imagem original para uso posterior
 	return GreyImage;
 }
 
 
-//FUNCAO DE APLICACAO DO FILTRO GAUSSIANO NA IMAGEM
-//COMO EXTRA EU POSSO CONTROLAR A QUANTIDADE DE APLICACOES
+//Funcao de aplicacao do filtro de gauss na minha imagem passada por parametro
+//Como extra eu posso controlar a quantidade de aplicacoes
 Imagem *GaussFilter (Imagem *m, int blurtimes) {
 	if (blurtimes < 0) {
 		fprintf(stderr, "ERRO: Nao pode borrar a imagem %d vezes!\n", blurtimes);
@@ -69,6 +69,7 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 		fprintf(stderr, "ERRO: Filtro Gaussiano nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
 		freeImagem(GaussImage);
 		freeImagem(m);
+		return 0;
 	}
 
 	//Aqui comeca a recurcao para situacoes em que se usa mais de 1 vez o filtro
@@ -86,13 +87,13 @@ Imagem *GaussFilter (Imagem *m, int blurtimes) {
 	}
 
 	//freeImagem(m);
-	//Nao dou free para manter a imagem cinza para utilizacao futura
+	//Nao dou free aqui, para guardar a imagem cinza para uso posterior
 	return GaussImage;
 }
 
 
-//FUNCAO DE APLICACAO DO FILTRO DE SOBEL NA IMAGEM
-//COMO EXTRA EU POSSO CONTROLAR A QUANTIDADE DE APLICACOES
+//Funcao de aplicacao do filtro de sobel na imagem
+//Como extra eu posso controlar a quantidade de aplicacoes
 Imagem *SobelFilter (Imagem *m, int limite) {
 	if (limite < 0) {
 		fprintf(stderr, "ERRO: Nao foi possivel aplicar o filtro de sobel vezes!\n");
@@ -141,6 +142,7 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 		fprintf(stderr, "ERRO: Filtro de sobel nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
 		freeImagem(SobelImage);
 		freeImagem(m);
+		return 0;
 	}
 
 	//Aqui comeca a recurcao para situacoes em que se usa mais de 1 vez o filtro
@@ -162,6 +164,7 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 	return SobelImage;
 }
 
+//Funcao de aplicacao da binarizacao na minha imagem passada por parametro
 Imagem *Binarizacao (Imagem *m, int limiar) {
 	int i,j;
 
@@ -189,12 +192,14 @@ Imagem *Binarizacao (Imagem *m, int limiar) {
 		fprintf(stderr, "ERRO: Binarizacao nao pode ser aplicada com sucesso! Imagem resultante foi Nula\n");
 		freeImagem(BinImage);
 		freeImagem(m);
+		return 0;
 	}
 
 	freeImagem(m);
 	return BinImage;
 }
 
+//Funcao de aplicacao da Transformada de Hough para a obtencao de centros e raios de possiveis circulos
 Centro *Transformada_Hough (Imagem *m) {
     int altura = (int) m->altura;
     int largura = (int) m->largura;
@@ -242,8 +247,8 @@ Centro *Transformada_Hough (Imagem *m) {
     for (i=rmin; i < altura-rmax; i++) {
         for (j=rmin; j < largura-rmax; j++) {
             for (r=rmin_iris; r <= rmax; r++) {
-                //As coordenadas serao uma media das coordenadas, dos pontos na matriz, maiores
-                //que ou iguais a 87,5% do valor maximo na matriz
+                //As coordenadas serao calculadas a partir de uma media entre elas
+                //Devendo ser maior ou igual a 87.5% do valor maximo da matriz (255)
                 if (A[dim*(r-rmin)+(i*largura)+j] >= 0.875*max) {
                     count++;
                     icount += i;
@@ -295,9 +300,13 @@ Centro *Transformada_Hough (Imagem *m) {
             }
         }
     }
+
+    printf("Coordenada = (%d,%d)\nRaio = %d\n", c->x, c->y, c->r);
+    free(A);
     return c;
 }
  
+//Funcao para segmentacao da pupila do restante da imagem
 Imagem *pupila_segmentada (Imagem *m, Centro *c) {
     Imagem *PupImage = criarImagem(m->altura, m->largura, m->max);
     strcpy(PupImage->header, m->header);
@@ -307,7 +316,7 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c) {
 	for(i=0; i < m->altura; i++) {
 		for(j=0; j < m->largura; j++) {
     		//Caso o pixel pertenca a um circulo de mesmo centro que a pupila
-    		//e com raio equivalente (5 pixels decrescidos para eliminar bordas da iris)
+    		//E mesmo raio (tirar 5 pixels para evitar bordas da iris)
     		if (sqrt((i-c->y)*(i-c->y)+(j-c->x)*(j-c->x)) < c->r-5) {
         		PupImage->M[i][j].r = m->M[i][j].r;
         		PupImage->M[i][j].g = m->M[i][j].g;
@@ -330,51 +339,45 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c) {
 	return PupImage;
 }
 
+//Procedimento para o contorno da pupila em RGB
 void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 	unsigned int t;
 	int xpos, ypos;
 	
-	//percorre a circunferencia do circulo com centro igual
-	//a centro passado por parametro
+	//Percorre a circunferencia de centro igual ao passado por parametro
 	for (t = 0; t < 360; t++) {
-		//calcula as coordenadas de pontos no raio
+		//Calcula as coordenadas atraves do raio (incluso na passagem por parametro do Centro)
 		ypos = c->r*sin(t*(PI/180.0));
 		xpos = c->r*cos(t*(PI/180.0));
 
-		//marca em magenta a coordenada no raio
+		//Marca em magenta as coordenadas no raio
 		m->M[c->y+ypos][c->x+xpos].r = 255;
 		m->M[c->y+ypos][c->x+xpos].g = 0;
 		m->M[c->y+ypos][c->x+xpos].b = 255;
 	}
 }
 
+//Funcao para obtencao da porcentagem de pixels com catarata
 double pixels_comprometidos (Imagem *m) {
 	int i,j;
-	int limiar = 6*(m->max/10);
-	int count_total = 0,count = 0;
+	int limiar = 150;
+	double count_total = 0,count = 0;
 
 	for (i=0; i < m->altura; i++) {
 		for (j=(int) (m->largura)/4; j < m->largura; j++) {
 			//Para cada pixel, checar se o pixel pertence a pupila, e se sim, se ele esta comprometido ou nao
 			//Se o pixel pertencer a pupila, ou seja, diferente de 0
 			if (m->M[i][j].r != 0) {
-				count_total += 1;
+				count_total++;//Cada pixel existente na pupila (ou seja, o total)
 
-				if (m->M[i][j].r > limiar) {
-					count += 3;
+				if (m->M[i][j].r > 6*limiar/10) {
+					count++;//Cada pixel que corresponde a pixel de catarata
 				}
-				else {
-					count += 0;
-				}
-			}
-			else {
-				count_total += 0;
 			}
 		}
 	}
 
-	double porcento = (double) (count/count_total);
-
+	double porcento = (double) (count*100)/count_total;
 	freeImagem(m);
 	return porcento;
 }

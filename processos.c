@@ -197,7 +197,7 @@ Centro *Transformada_Hough (Imagem *m) {
     int altura = (int) m->altura;
     int largura = (int) m->largura;
     int r;
-    double PI = 3.14159;
+
     int rmin = fmin(altura,largura)/20;
     int rmin_iris = fmin(altura,largura)/10;
     int rmax = fmin(altura,largura)/4;
@@ -210,13 +210,14 @@ Centro *Transformada_Hough (Imagem *m) {
  
     int i,j,x,y;
     int dim = altura*largura;
+    int theta;
     for (i=rmax; i < altura-rmax; i++) {
         for (j=rmax; j < largura-rmax; j++) {
             if (m->M[i][j].r == 255) {
                 for (r=rmin; r <= rmax; r++) {
-                    for (int g=0; g < 360; g++) {
-                        y = i - r * sin(g*PI/180.0);
-                        x = j + r * cos(g*PI/180.0);
+                    for (theta=0; theta < 360; theta++) {
+                        y = i - r * sin(theta*PI/180.0);
+                        x = j + r * cos(theta*PI/180.0);
                         A[(r-rmin)*dim+(y*largura)+x]++;//espaço de Hough
                     }
                 }
@@ -323,26 +324,24 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c) {
   		freeImagem(m);
 	}
 	
-	freeImagem(m);
+	//freeImagem(m);
 	return PupImage;
 }
 
-// void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
-// 	unsigned int i,j,t;
-// 	int xpos, ypos;
+void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
+	unsigned int t;
+	int xpos, ypos;
+	
+	//percorre a circunferencia do circulo com centro igual
+	//a centro passado por parametro
+	for (t = 0; t < 360; t++) {
+		//calcula as coordenadas de pontos no raio
+		ypos = c->r*sin(t*(PI/180.0));
+		xpos = c->r*cos(t*(PI/180.0));
 
-// 	//atribuicao de titulo
-// 	//percorre a circunferencia do circulo com centro igual
-// 	//a centro passado por parametro
-// 	for (t = 0; t < 360; t++) {
-// 		//calcula as coordenadas de pontos no raio
-// 		ypos = c->r*sin(t*(PI/180.0));
-// 		xpos = c->r*cos(t*(PI/180.0));
-
-// 		//marca coordenada no raio de verde
-// 		m->M[c->y + ypos][c->x + xpos].r = 0;
-// 		m->M[c->y + ypos][c->x + xpos].g = 255;
-// 		m->M[c->y + ypos][c->x + xpos].b = 0;
-// 		}
-// 	}
-// }
+		//marca coordenada no raio de verde
+		m->M[c->y+ypos][c->x+xpos].r = 255;
+		m->M[c->y+ypos][c->x+xpos].g = 0;
+		m->M[c->y+ypos][c->x+xpos].b = 255;
+	}
+}

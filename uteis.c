@@ -26,6 +26,10 @@ Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int la
 }
 
 //Remove o caminho de diretorio da string
+//Na execucao do programa, eu posso colocar qualquer diretorio antes da imagem entra
+//que nao havera problema
+//Exemplo: ./catarata -i pasta/aleatoria/qualquer/Normal2.ppm -f ppm -o diag.txt
+//Minha imagem ainda sera Normal2.ppm
 char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 
 	//Se a o argumento for o proprio arquivo, retorna ele mesmo
@@ -35,12 +39,12 @@ char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 
 	char *filename_sem_diretorio = (char *) calloc(strlen(filepath),sizeof(char));
 
-	//tira a pasta folder do nome
+	//Tira a pasta folder do nome
 	int t = strlen(filepath);
 	int j;
 	for (int i=t-1; i >= 0; i--) {
 		if (filepath[i] == '/') {
-			//variavel para me ajudar a manter o valor de i
+			//Variavel para me ajudar a manter o valor de i
 			int y = i;
 			for (j=0; j < t-1-i; j++) {
 				filename_sem_diretorio[j] = filepath[y+1];
@@ -88,11 +92,19 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 	return outfilename;
 }
 
-//Procedimento para escrita do diagnostico de catarata
-void make_diagnostico (double porcentoCatarata, char* diagnostico) {
-
+//Procedimento para escrita do diagnostico sobre a existencia ou nao de catarata no olho
+void make_diagnostico(double percentCatarata, char* diagnostico, char* filename) {
+	system("mkdir -p out");//Para o caso de eu nao imprimir nenhuma imagem anteriormente
+	char *temp = calloc(strlen(filename),sizeof(char));
 	char *new_diagnostico = calloc(strlen(diagnostico) + 6,sizeof(char));
-	sprintf(new_diagnostico, "out/%s", diagnostico);
+
+	for (int i=0; i < strlen(filename); i++) {
+		if (filename[i] == '.') {
+			strncat(temp, filename, 2);
+		}
+	}
+
+	sprintf(new_diagnostico, "out/%s__%s", temp, diagnostico);
 	FILE *arquivo = fopen(new_diagnostico, "w");
 
 	if (arquivo == NULL) {
@@ -101,12 +113,13 @@ void make_diagnostico (double porcentoCatarata, char* diagnostico) {
 	}
 
 	//Caso mais de 9% dos pixels do olho estiverem comprometidos, considera-se que o individuo possui catarata
-	if (porcentoCatarata >= 9) {
-		fprintf(arquivo, "Situação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf\n%%\nFim do diagnóstico.", porcentoCatarata);
+	if (percentCatarata >= 9) {
+		fprintf(arquivo, "Imagem Analisada: %s\nSituação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 	else {
-		fprintf(arquivo, "Situação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf\n%%\nFim do diagnóstico.", porcentoCatarata);
+		fprintf(arquivo, "Imagem Analisada: %s\nSituação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 
+	free(temp);
 	fclose(arquivo);
 }

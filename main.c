@@ -62,6 +62,7 @@ int main(int argc, char const *argv[]) {
 	}
 
 
+	//Aqui se define a quantidade de aplicacoes do filtro
 	x = 1;//Quantificador
 
 
@@ -88,6 +89,7 @@ int main(int argc, char const *argv[]) {
 	}
 
 
+	//Aqui se define a quantidade de aplicacoes do filtro
 	x = 1;//Quantificador
 
 
@@ -117,18 +119,27 @@ int main(int argc, char const *argv[]) {
 
 	//Minha imagem binarizada
 	int limiar;
-	if (strcmp(filename, "c1.ppm") == 0) {
+	if (strcmp(filename, "Catarata.ppm") == 0) {
 		limiar = 35; //OK
 	}
-	else if (strcmp(filename, "c2.ppm") == 0) {
+	else if (strcmp(filename, "Catarata2.ppm") == 0) {
 		printf("Chuta ai a merda de um limiar pra a porra dessa imagem\nCaralho Puto Arrombado\n");
 		scanf("%d", &limiar);//Sla esse carai, dps vejo //FUCKKKAOOOOYYYYYOUU
+		//30 da merda
+		//21 ate q ficou lglzin
+		//22 tbm
+		//23 piorou
+		//24 ficou uma merda
+
 	}
-	else if (strcmp(filename, "n1.ppm") == 0) {
+	else if (strcmp(filename, "Normal.ppm") == 0) {
 	 	limiar = 25; //OK
 	}
-	else if (strcmp(filename, "n2.ppm") == 0) {
+	else if (strcmp(filename, "Normal2.ppm") == 0) {
 		limiar = 50; //OK
+	}
+	else {
+		printf("         ATENCAO!!\nImagem sem limiar de binarizacao definido\n");
 	}
 
 	Imagem *binImg = Binarizacao(sobelImg, limiar); 
@@ -158,7 +169,7 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 	if (c->r == 0) { 
-		fprintf(stderr, "F4T4L 3RR0R.1: Nao existe um raio retornado\n");
+		fprintf(stderr, "F4T4L 3RR0R: Nao existe um raio retornado\n");
 		return 0;
 	}
 
@@ -202,9 +213,9 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 
-	double porcentagem_catarata = pixels_comprometidos(pupilaImg);
+	double porcentagem = pixels_comprometidos(pupilaImg);
 
-	make_diagnostico(porcentagem_catarata, diagnostico);
+	make_diagnostico(porcentagem, diagnostico, filename);
 
 	return 0;
 }

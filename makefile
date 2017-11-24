@@ -6,10 +6,12 @@ outdir = ./out
 
 #Variaveis
 CC = gcc
-CFLAGS = -Wall -pedantic -ansi -std=c99
+CFLAGS = -Wall -pedantic -ansi -std=c99 -lm
+
+.PHONY: clean cleanin cleanobj cleanout
 
 main: $(objdir)/uteis.o $(objdir)/read.o $(objdir)/write.o $(objdir)/processos.o
-	$(CC) $(CFLAGS) $(srcdir)/main.c $(srcdir)/uteis.c $(srcdir)/read.c $(srcdir)/write.c $(srcdir)/processos.c -o catarata -lm
+	$(CC) $(CFLAGS) $(srcdir)/main.c $(srcdir)/uteis.c $(srcdir)/read.c $(srcdir)/write.c $(srcdir)/processos.c -o catarata $(CFLAGS)
 
 $(objdir)/uteis.o: $(srcdir)/uteis.h
 	mkdir -p obj

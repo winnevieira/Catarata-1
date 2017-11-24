@@ -3,6 +3,9 @@
 
 #include "uteis.h"
 
+//Definicao do valor de pi
+#define PI 3.141592
+
 //Funcao de criacao da minha imagem entrada em tons de cinza
 Imagem *make_PPM_cinza (Imagem *m);
 
@@ -22,6 +25,6 @@ Centro *Transformada_Hough (Imagem *m);
 Imagem *pupila_segmentada (Imagem *m, Centro *c);
 
 //Procedimento para o contorno da pupila em RGB
-//void marcacao_de_pupila_cor (Imagem *m, Centro *c);
+void marcacao_de_pupila_cor (Imagem *m, Centro *c);
 
 #endif

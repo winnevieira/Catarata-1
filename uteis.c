@@ -46,7 +46,7 @@ char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 			//Variavel para me ajudar a manter o valor de i
 			int y = i;
 			for (j=0; j < t-1-i; j++) {
-				filename_sem_diretorio[j] = filepath[y+1];
+				filename_sem_diretorio[j] = filepath[y+1];//Transferencia de nome
 				y++;
 				printf("%c\n", filename_sem_diretorio[j]);
 			}
@@ -99,6 +99,7 @@ void make_diagnostico(double percentCatarata, char* diagnostico, char* filename)
 
 	for (int i=0; i < strlen(filename); i++) {
 		if (filename[i] == '.') {
+			//Adicionar o nome da imagem ao nome do arquivo contendo o diagnostico
 			strncat(temp, filename, i);
 		}
 	}
@@ -120,5 +121,6 @@ void make_diagnostico(double percentCatarata, char* diagnostico, char* filename)
 	}
 
 	free(temp);
+	free(new_diagnostico);
 	fclose(arquivo);
 }

@@ -85,6 +85,7 @@ Imagem *ler_img(char *filename) {
 
 	free(formato);
 	free(str_check);
+	free(real_filename);
 	fclose(arquivo);
 	return m;
 }

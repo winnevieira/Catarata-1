@@ -31,7 +31,6 @@ Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int la
 //Exemplo: ./catarata -i pasta/aleatoria/qualquer/Normal2.ppm -f ppm -o diag.txt
 //Minha imagem ainda sera Normal2.ppm
 char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
-
 	//Se a o argumento for o proprio arquivo, retorna ele mesmo
 	if (!strstr(filepath, "/")) {
 		return filepath;
@@ -96,15 +95,15 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 void make_diagnostico(double percentCatarata, char* diagnostico, char* filename) {
 	system("mkdir -p out");//Para o caso de eu nao imprimir nenhuma imagem anteriormente
 	char *temp = calloc(strlen(filename),sizeof(char));
-	char *new_diagnostico = calloc(strlen(diagnostico) + 6,sizeof(char));
+	char *new_diagnostico = calloc(strlen(diagnostico) + strlen(filename) + 6,sizeof(char));
 
 	for (int i=0; i < strlen(filename); i++) {
 		if (filename[i] == '.') {
-			strncat(temp, filename, 2);
+			strncat(temp, filename, i);
 		}
 	}
 
-	sprintf(new_diagnostico, "out/%s__%s", temp, diagnostico);
+	sprintf(new_diagnostico, "out/%s_%s", temp, diagnostico);
 	FILE *arquivo = fopen(new_diagnostico, "w");
 
 	if (arquivo == NULL) {
@@ -114,10 +113,10 @@ void make_diagnostico(double percentCatarata, char* diagnostico, char* filename)
 
 	//Caso mais de 9% dos pixels do olho estiverem comprometidos, considera-se que o individuo possui catarata
 	if (percentCatarata >= 9) {
-		fprintf(arquivo, "Imagem Analisada: %s\nSituação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
+		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 	else {
-		fprintf(arquivo, "Imagem Analisada: %s\nSituação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
+		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 
 	free(temp);

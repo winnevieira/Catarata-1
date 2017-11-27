@@ -42,23 +42,28 @@ int main(int argc, char const *argv[]) {
 
 	//Minha imagem em tons de cinza
 	Imagem *greyImg = (Imagem *) make_PPM_cinza(originalImg);
-	printf("Deseja criar a imagem em tons de cinza?\nS (sim) ou N (nao).\n");
-	scanf("%c", &sn);
 
-	if (sn == 'S') {
-		printf("\n****Imagem criada com sucesso****\n\n");
-		char *outfileGrey = saidaImagem("out/", filename, formato, "_grey");//Onde eu quero salvar a imagem acinzentada
-		write_img(greyImg, outfileGrey);
-		free(outfileGrey);
-	}
+	while (6 > 0) {
+		printf("Deseja criar a imagem em tons de cinza?\nS (sim) ou N (nao).\n");
+		scanf("%c", &sn);
 
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem cinza foi criada\n\n");
-	}
+		if (sn == 'S') {
+			printf("\n****Imagem criada com sucesso****\n\n");
+			char *outfileGrey = saidaImagem("out/", filename, formato, "_grey");//Onde eu quero salvar a imagem acinzentada
+			write_img(greyImg, outfileGrey);
+			free(outfileGrey);
+			break;
+		}
 
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem cinza foi criada\n\n");
+			break;
+		}
+
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 
@@ -69,23 +74,27 @@ int main(int argc, char const *argv[]) {
 	//Minha imagem borrada
 	Imagem *gaussImg = (Imagem *) GaussFilter(greyImg, x);
 
-	printf("Deseja criar a imagem borrada?\nS (sim) ou N (nao).\n");
-	scanf(" %c", &sn);
+	while (6 > 1) {
+		printf("Deseja criar a imagem borrada?\nS (sim) ou N (nao).\n");
+		scanf(" %c", &sn);
 
-	if (sn == 'S') {
-		printf("\n****Imagem criada com sucesso****\n\n");
-		char *outfileGauss = saidaImagem("out/", filename, formato, "_gauss");//Onde eu quero salvar a imagem borrada
-		write_img(gaussImg, outfileGauss);
-		free(outfileGauss);		
-	}
+		if (sn == 'S') {
+			printf("\n****Imagem criada com sucesso****\n\n");
+			char *outfileGauss = saidaImagem("out/", filename, formato, "_gauss");//Onde eu quero salvar a imagem borrada
+			write_img(gaussImg, outfileGauss);
+			free(outfileGauss);
+			break;
+		}
 
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem borrada foi criada\n\n");
-	}
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem borrada foi criada\n\n");
+			break;
+		}
 
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 
@@ -96,23 +105,27 @@ int main(int argc, char const *argv[]) {
 	//Minha imagem sob aplicacao do filtro de sobel
 	Imagem *sobelImg = (Imagem *) SobelFilter(gaussImg, x);
 
-	printf("Deseja criar a imagem com filtro aplicado?\nS (sim) ou N (nao).\n");
-	scanf(" %c", &sn);
+	while (6 > 2) {
+		printf("Deseja criar a imagem com filtro aplicado?\nS (sim) ou N (nao).\n");
+		scanf(" %c", &sn);
 
-	if (sn == 'S') {
-		printf("\n****Imagem criada com sucesso****\n\n");
-		char *outfileSobel = saidaImagem("out/", filename, formato, "_sobel");//Onde eu quero salvar a imagem sob aplicacao de sobel
-		write_img(sobelImg, outfileSobel);
-		free(outfileSobel);	
-	}
+		if (sn == 'S') {
+			printf("\n****Imagem criada com sucesso****\n\n");
+			char *outfileSobel = saidaImagem("out/", filename, formato, "_sobel");//Onde eu quero salvar a imagem sob aplicacao de sobel
+			write_img(sobelImg, outfileSobel);
+			free(outfileSobel);
+			break;
+		}
 
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem com aplicacao de sobel foi criada\n\n");
-	}
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem com aplicacao de sobel foi criada\n\n");
+			break;
+		}
 
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 	//----------------------------//
@@ -123,7 +136,7 @@ int main(int argc, char const *argv[]) {
 		limiar = 35; //OK
 	}
 	else if (strcmp(filename, "Catarata2.ppm") == 0) {
-		printf("Chuta ai a merda de um limiar pra a porra dessa imagem\nCaralho Puto Arrombado\n");
+		printf("Chuta ai a merda de um limiar pra a porra dessa imagem\nCaralho Puto Arrombado\nRata Cabron Hijo del Putana\n");
 		scanf("%d", &limiar);//Sla esse carai, dps vejo //FUCKKKAOOOOYYYYYOUU
 		//30 da merda
 		//21 ate q ficou lglzin
@@ -144,23 +157,27 @@ int main(int argc, char const *argv[]) {
 
 	Imagem *binImg = Binarizacao(sobelImg, limiar); 
 
-	printf("Deseja criar a imagem binarizada?\nS (sim) ou N (nao).\n");
-	scanf(" %c", &sn);
+	while (6 > 3) {
+		printf("Deseja criar a imagem binarizada?\nS (sim) ou N (nao).\n");
+		scanf(" %c", &sn);
 
-	if (sn == 'S') {
-		printf("\n****Imagem criada com sucesso****\n\n");
-		char *outfileBin = saidaImagem("out/", filename, formato, "_bin");//Onde eu quero salvar a imagem binarizada
-		write_img(binImg, outfileBin);
-		free(outfileBin);	
-	}
+		if (sn == 'S') {
+			printf("\n****Imagem criada com sucesso****\n\n");
+			char *outfileBin = saidaImagem("out/", filename, formato, "_bin");//Onde eu quero salvar a imagem binarizada
+			write_img(binImg, outfileBin);
+			free(outfileBin);
+			break;
+		}
 
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem binarizada foi criada\n\n");
-	}
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem binarizada foi criada\n\n");
+			break;
+		}
 
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 	Centro *c = Transformada_Hough(binImg);
@@ -176,46 +193,55 @@ int main(int argc, char const *argv[]) {
 	//Minha imagem com a pupila segmentada
 	Imagem *pupilaImg = pupila_segmentada(greyImg, c);
 
-	printf("Deseja criar a imagem da pupila segmentada em tons coloridos?\nS (sim) ou N (nao).\n");
-	scanf(" %c", &sn);
+	while (6 > 4) {
+		printf("Deseja criar a imagem da pupila segmentada em tons coloridos?\nS (sim) ou N (nao).\n");
+		scanf(" %c", &sn);
 
-	if (sn == 'S') {
-		printf("\n****Imagem criada com sucesso****\n\n");
-		char *outfilePupila = saidaImagem("out/", filename, formato, "_pupila");//Onde eu quero salvar a pupila segmentada
-		write_img(pupilaImg, outfilePupila);
-		free(outfilePupila);	
-	}
+		if (sn == 'S') {
+			printf("\n****Imagem criada com sucesso****\n\n");
+			char *outfilePupila = saidaImagem("out/", filename, formato, "_pupila");//Onde eu quero salvar a pupila segmentada
+			write_img(pupilaImg, outfilePupila);
+			free(outfilePupila);
+			break;
+		}
 
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem de pupila segmentada foi criada\n\n");
-	}
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem de pupila segmentada foi criada\n\n");
+			break;
+		}
 
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 	//Minha imagem (em RGB) com a pupila contornada
-	printf("Deseja criar a imagem original em RGB com a pupila contornada?\nS (sim) ou N (nao).\n");
-	scanf(" %c", &sn);
+	while (6 > 5) {
+		printf("Deseja criar a imagem original em RGB com a pupila contornada?\nS (sim) ou N (nao).\n");
+		scanf(" %c", &sn);
 
-	if (sn == 'S') {
-		marcacao_de_pupila_cor(originalImg, c);
-		char *outfileContorno = saidaImagem("out/", filename, formato, "_contorno");//Onde eu quero salvar a imagem original em RGB com a pupila contornada
-		write_img(originalImg, outfileContorno);
-		free(outfileContorno);
-	}
-	else if (sn == 'N') {
-		printf("\nNenhuma imagem (em RGB) com pupila contornada foi criada\n\n");
-	}
-	else {
-		fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
-		return 0;
+		if (sn == 'S') {
+			marcacao_de_pupila_cor(originalImg, c);
+			char *outfileContorno = saidaImagem("out/", filename, formato, "_contorno");//Onde eu quero salvar a imagem original em RGB com a pupila contornada
+			write_img(originalImg, outfileContorno);
+			free(outfileContorno);
+			break;
+		}
+		else if (sn == 'N') {
+			printf("\nNenhuma imagem (em RGB) com pupila contornada foi criada\n\n");
+			break;
+		}
+		else {
+			fprintf(stderr, "ERRO: Necessario fazer uma das escolhas disponiveis!\n");
+			continue;
+		}
 	}
 
 	double porcentagem = pixels_comprometidos(pupilaImg);
 
 	make_diagnostico(porcentagem, diagnostico, filename);
 
+	//freeImagem(originalImg);
 	return 0;
 }

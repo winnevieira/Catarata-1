@@ -6,13 +6,12 @@ Feito por:	Daniel Oliveira Guerra
 
 
 Funcionalidas Extras:
-	Imagem em RGB com contorno da pupila; (Ver processos.c)
-	Definição da quantidade de vezes que se gostaria de aplicar o filtro de Gauss/Sobel; (Definiçao da quantidade no main.c)
-	Ignorar comentários nas imagens (seja antes do formato; entre o formato e a linha com largura e altura; seja entre a linha com largura e altura e a linha contendo o max); (Ver em read.c e read.h)
-	Makefile não está feio;
-	Diagnóstico também diz qual foi a imagem analisada; (Ver uteis.c)
-	A imagem entrada pode ter qualquer diretório escrito na execução do programa (função 'tirar_diretorio_do_nome_da_imagem'; checar uteis.c e uteis.h);
-	Perguntas para dar o poder de decisão ao usuário;
+	1. Imagem em RGB com contorno da pupila; (Ver processos.c)
+	2. Definição da quantidade de vezes que se gostaria de aplicar o filtro de Gauss/Sobel; (Definiçao da quantidade no main.c)
+	3. Ignorar comentários nas imagens (seja antes do formato; entre o formato e a linha com largura e altura; seja entre a linha com largura e altura e a linha contendo o max); (Ver em read.c e read.h)
+	4. Diagnóstico também diz qual foi a imagem analisada; (Ver uteis.c)
+	5. A imagem entrada pode ter qualquer diretório escrito na execução do programa (função 'tirar_diretorio_do_nome_da_imagem'; checar uteis.c e uteis.h);
+	6. Perguntas para dar o poder de decisão ao usuário;
 
 
 Funcionalidades básicas:
@@ -26,4 +25,3 @@ O que seria feito diferente:
 
 Para compilar:
 	Digite 'make' no terminal.
-	

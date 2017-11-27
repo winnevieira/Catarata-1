@@ -347,8 +347,8 @@ void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 	//Percorre a circunferencia de centro igual ao passado por parametro
 	for (t = 0; t < 360; t++) {
 		//Calcula as coordenadas atraves do raio (incluso na passagem por parametro do Centro)
-		ypos = c->r*sin(t*(PI/180.0));
-		xpos = c->r*cos(t*(PI/180.0));
+		ypos = c->r*sin(t*(PI/180.0));//Valor de 'y' na circunferencia (y = raio * seno(t))
+		xpos = c->r*cos(t*(PI/180.0));//Valor de 'x' na circunferencia (x = raio * cosseno(t))
 
 		//Marca em magenta as coordenadas no raio
 		m->M[c->y+ypos][c->x+xpos].r = 255;

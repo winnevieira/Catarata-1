@@ -31,6 +31,7 @@ Pixel **alocar_espaco_para_matriz_de_pixels(unsigned int altura, unsigned int la
 //Exemplo: ./catarata -i pasta/aleatoria/qualquer/Normal2.ppm -f ppm -o diag.txt
 //Minha imagem ainda sera Normal2.ppm
 char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
+
 	//Se a o argumento for o proprio arquivo, retorna ele mesmo
 	if (!strstr(filepath, "/")) {
 		return filepath;
@@ -46,7 +47,7 @@ char *tirar_diretorio_do_nome_da_imagem(char *filepath) {
 			//Variavel para me ajudar a manter o valor de i
 			int y = i;
 			for (j=0; j < t-1-i; j++) {
-				filename_sem_diretorio[j] = filepath[y+1];//Transferencia de nome
+				filename_sem_diretorio[j] = filepath[y+1];
 				y++;
 				printf("%c\n", filename_sem_diretorio[j]);
 			}
@@ -95,11 +96,11 @@ char *saidaImagem(char *folder, char *filename, char *formato, char *toAdd) {
 void make_diagnostico(double percentCatarata, char* diagnostico, char* filename) {
 	system("mkdir -p out");//Para o caso de eu nao imprimir nenhuma imagem anteriormente
 	char *temp = calloc(strlen(filename),sizeof(char));
-	char *new_diagnostico = calloc(strlen(diagnostico) + strlen(filename) + 6,sizeof(char));
+	char *new_diagnostico = calloc(strlen(diagnostico) + strlen(filename) + 6,sizeof(char));//Alocando espaço suficiente para o nome do arquivo acrescido da imagem e diretorio
 
 	for (int i=0; i < strlen(filename); i++) {
 		if (filename[i] == '.') {
-			//Adicionar o nome da imagem ao nome do arquivo contendo o diagnostico
+			//Pegando somente o nome da imagem, esquecendo o tipo de imagem
 			strncat(temp, filename, i);
 		}
 	}
@@ -114,13 +115,12 @@ void make_diagnostico(double percentCatarata, char* diagnostico, char* filename)
 
 	//Caso mais de 9% dos pixels do olho estiverem comprometidos, considera-se que o individuo possui catarata
 	if (percentCatarata >= 9) {
-		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: com catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
+		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: Com Catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 	else {
-		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: sem catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
+		fprintf(arquivo, "Imagem Analisada: %s\n\nSituação do indivíduo: Sem Catarata\nPorcentagem de comprometimento da pupila: %.2lf%%\nFim do diagnóstico.",filename, percentCatarata);
 	}
 
 	free(temp);
-	free(new_diagnostico);
 	fclose(arquivo);
 }

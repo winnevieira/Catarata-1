@@ -1,6 +1,6 @@
 #include "processos.h"
 
-//Funcao de criacao da minha imagem entrada em tons de cinza
+////Funcao de criacao da minha imagem entrada em tons de cinza
 Imagem *make_PPM_cinza (Imagem *m) {
 	unsigned int i,j;
 	int temp;
@@ -113,7 +113,7 @@ Imagem *SobelFilter (Imagem *m, int limite) {
 
 	for (i=0; (unsigned int)i < m->altura; i++) {
 		for (j=0; (unsigned int)j < m->largura; j++) {
-				//Aqui serao analisados cada pixel da imagem 'entrada'
+			//Aqui serao analisados cada pixel da imagem 'entrada'
 			aux_x = 0;
 			aux_y = 0;
 			for (k=0; k < 3; k++) {
@@ -288,7 +288,7 @@ Centro *Transformada_Hough (Imagem *m) {
         }
     }
  
-    //Atraves dos raios maximos encontrados, achamos qual raio pertence a pupila
+    //Atraves dos raios maximos encontrados, achamos qual raio deve pertencer a pupila
     for (i=0; i < count_raios; i++) {
         if (i == count_raios-1) {
             c->r = raios[i];
@@ -330,7 +330,7 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c) {
 		}
 	}
 	if (!PupImage) {
-  		fprintf(stderr, "ERROW: Imagem da pupila segmentada saiu Nula\n");
+  		fprintf(stderr, "ERROR: Imagem da pupila segmentada saiu Nula\n");
   		freeImagem(PupImage);
   		freeImagem(m);
 	}
@@ -347,8 +347,8 @@ void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 	//Percorre a circunferencia de centro igual ao passado por parametro
 	for (t = 0; t < 360; t++) {
 		//Calcula as coordenadas atraves do raio (incluso na passagem por parametro do Centro)
-		ypos = c->r*sin(t*(PI/180.0));//Valor de 'y' na circunferencia (y = raio * seno(t))
-		xpos = c->r*cos(t*(PI/180.0));//Valor de 'x' na circunferencia (x = raio * cosseno(t))
+		ypos = c->r*sin(t*(PI/180.0));
+		xpos = c->r*cos(t*(PI/180.0));
 
 		//Marca em magenta as coordenadas no raio
 		m->M[c->y+ypos][c->x+xpos].r = 255;
@@ -358,17 +358,21 @@ void marcacao_de_pupila_cor (Imagem *m, Centro *c) {
 }
 
 //Funcao para obtencao da porcentagem de pixels com catarata
-double pixels_comprometidos (Imagem *m) {
+double pixels_comprometidos (Imagem *m, Imagem *img) {
+	//A imagem 'm', refere-se a imagem da pupila segmentada
 	int i,j;
-	int limiar = 150;
+	int limiar = 150;//Valor obtido empiricamente
 	double count_total = 0,count = 0;
 
 	for (i=0; i < m->altura; i++) {
 		for (j=(int) (m->largura)/4; j < m->largura; j++) {
 			//Para cada pixel, checar se o pixel pertence a pupila, e se sim, se ele esta comprometido ou nao
-			//Se o pixel pertencer a pupila, ou seja, diferente de 0
-			if (m->M[i][j].r != 0) {
-				count_total++;//Cada pixel existente na pupila (ou seja, o total)
+			//Se o pixel pertencer a pupila, ou seja, 'm' possuir valor diferente de 0
+			//Se o pixel nao pertencer ao flash, ou seja, 'img' possuir valor igual a 0
+			if ((m->M[i][j].r != 0) && (img->M[i][j].r == 0)) {
+				//A imagem 'm', refere-se a imagem da pupila segmentada, logo, um pixel dessa imagem precisa ter valor
+				//A imagem 'img', refere-se a imagem do flash segmentado, logo, um pixel dessa imagem nao pode ter valor
+				count_total++;//Cada pixel existente na pupila e que tambem não faz parte do flash, ou seja, o total a analisar
 
 				if (m->M[i][j].r > 6*limiar/10) {
 					count++;//Cada pixel que corresponde a pixel de catarata
@@ -376,8 +380,35 @@ double pixels_comprometidos (Imagem *m) {
 			}
 		}
 	}
-
 	double porcento = (double) (count*100)/count_total;
+
 	freeImagem(m);
+	freeImagem(img);
 	return porcento;
+}
+
+//Funcao para segmentacao do flash do restante da imagem
+Imagem *flash_segmentado (Imagem *m, unsigned short int limiar) {
+	Imagem *FlashImage = criarImagem(m->altura, m->largura, m->max);
+	strcpy(FlashImage->header, m->header);
+
+	for (unsigned int i=0; i < m->altura; i++) {
+		for (unsigned int j=0; j < m->largura; j++) {
+			//Analise de cada pixel
+			//Caso o pixel possuir valor maior ou igual a um limiar, considera-o como pixel de flash
+			//Valor de limiar passado como parametro, e encontrado empiricamente
+			if (m->M[i][j].r >= limiar) {
+				FlashImage->M[i][j].r = m->M[i][j].r;
+				FlashImage->M[i][j].g = m->M[i][j].g;
+				FlashImage->M[i][j].b = m->M[i][j].b;
+			}
+			else {
+				FlashImage->M[i][j].r = 0;
+				FlashImage->M[i][j].g = 0;
+				FlashImage->M[i][j].b = 0;
+			}
+		}
+	}
+
+	return FlashImage;
 }

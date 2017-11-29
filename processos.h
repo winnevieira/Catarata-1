@@ -28,6 +28,9 @@ Imagem *pupila_segmentada (Imagem *m, Centro *c);
 void marcacao_de_pupila_cor (Imagem *m, Centro *c);
 
 //Funcao para porcentagem de pixels com catarata
-double pixels_comprometidos (Imagem *m);
+double pixels_comprometidos (Imagem *m, Imagem *img);
+
+//Funcao para segmentacao do flash do restante da imagem
+Imagem *flash_segmentado (Imagem *m, unsigned short int limiar);
 
 #endif

@@ -273,11 +273,15 @@ Centro *Transformada_Hough (Imagem *m) {
  
     //Algoritmo para achar o raio da pupila
     max = 0;
-    int raios[rmax-rmin+1];
+    int *raios = calloc(rmax-rmin+1,sizeof(int));
     int r_max_diferente;
     int count_raios = 0;
     for (r=rmin; r <= rmax+1; r++) {
-        if ((A[dim*(r-rmin)+(imax*largura)+jmax] == 0 && max != 0) || (r == rmax+1)) {
+		if (r == rmax+1) {
+			max = 0;
+			raios[count_raios++] = r_max_diferente;
+			continue;
+        else if ((A[dim*(r-rmin)+(imax*largura)+jmax] == 0) && (max != 0)) {
             max = 0;
             raios[count_raios++] = r_max_diferente;
             continue;
@@ -303,6 +307,7 @@ Centro *Transformada_Hough (Imagem *m) {
 
     printf("Coordenada = (%d,%d)\nRaio = %d\n", c->x, c->y, c->r);
     free(A);
+	free(raios);
     return c;
 }
  
@@ -369,6 +374,7 @@ double pixels_comprometidos (Imagem *m, Imagem *img) {
 			//Para cada pixel, checar se o pixel pertence a pupila, e se sim, se ele esta comprometido ou nao
 			//Se o pixel pertencer a pupila, ou seja, 'm' possuir valor diferente de 0
 			//Se o pixel nao pertencer ao flash, ou seja, 'img' possuir valor igual a 0
+			
 			if ((m->M[i][j].r != 0) && (img->M[i][j].r == 0)) {
 				//A imagem 'm', refere-se a imagem da pupila segmentada, logo, um pixel dessa imagem precisa ter valor
 				//A imagem 'img', refere-se a imagem do flash segmentado, logo, um pixel dessa imagem nao pode ter valor
@@ -397,6 +403,7 @@ Imagem *flash_segmentado (Imagem *m, unsigned short int limiar) {
 			//Analise de cada pixel
 			//Caso o pixel possuir valor maior ou igual a um limiar, considera-o como pixel de flash
 			//Valor de limiar passado como parametro, e encontrado empiricamente
+			
 			if (m->M[i][j].r >= limiar) {
 				FlashImage->M[i][j].r = m->M[i][j].r;
 				FlashImage->M[i][j].g = m->M[i][j].g;
